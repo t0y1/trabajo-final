@@ -26,25 +26,26 @@ public class RaycastInteraction : MonoBehaviour
         if (Physics.Raycast(rayOrigin.position, rayOrigin.forward, out hit, rayLenght, layer))
         {            
             interactable = hit.collider.GetComponent<InteractableObject>();
-            if (interactable)
+            if (interactable && !interactable.activated)
             {
+                hintText.text = "Press E to open!";
+            }
+            if (interactable && interactable.activated) 
+            {
+                hintText.text = "Already opened!";
+
             }
         }
         uiGO.SetActive(interactable);
         if (interactable && Input.GetKeyDown(KeyCode.E))
         {
-            string message = "";
             if (!interactable.activated)
             {
                 interactable.PlayObjectAnimation();
-                message = "Succesfully open!";
             }
-            else
-            {
-                message = "It's already open!";
-            }
+            
             StopAllCoroutines();
-            StartCoroutine(ShowHintDuringTime(message));
+            StartCoroutine(ShowHintDuringTime());
         }
 
     }
@@ -55,10 +56,9 @@ public class RaycastInteraction : MonoBehaviour
         Gizmos.DrawLine(rayOrigin.position, rayOrigin.position + rayOrigin.forward * rayLenght);
     }
 
-    IEnumerator ShowHintDuringTime(string hintMessage)
+    IEnumerator ShowHintDuringTime()
     {
         float time = 0;
-        hintText.text = hintMessage;
         while (time < hintTime)
         {
             time += Time.deltaTime;

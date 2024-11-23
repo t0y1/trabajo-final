@@ -12,8 +12,9 @@ public class SentryBotBehavior : MonoBehaviour
     public Transform targetTR;
     public NavMeshAgent agent;
     public bool isArrived;
+    public bool Fplayer = false;
     // Start is called before the first frame update
-    
+
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -27,24 +28,29 @@ public class SentryBotBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (targetTR)
+
+        if (Fplayer == false)
         {
-            agent.destination = targetTR.position;
+            isArrived = agent.remainingDistance < agent.stoppingDistance;
+
+            if (isPatrolling)
+            {
+                if (isArrived)
+                {
+                    currentWaypoint++;
+                    if (currentWaypoint >= waypoints.Length)
+                    {
+                        currentWaypoint = 0;
+                    }
+                }
+                agent.destination = waypoints[currentWaypoint].position;
+            }
         }
 
-        isArrived = agent.remainingDistance < agent.stoppingDistance;
-
-        if (isPatrolling)
+        else
         {
-            if (isArrived)
-            {                
-                currentWaypoint++;
-                if (currentWaypoint >= waypoints.Length)
-                {
-                    currentWaypoint = 0;
-                }
-            }
-            agent.destination = waypoints[currentWaypoint].position;
+            agent.destination = targetTR.position;
+
         }
     }
 }
