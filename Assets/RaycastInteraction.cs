@@ -12,6 +12,7 @@ public class RaycastInteraction : MonoBehaviour
     public Text hintText;
     public float hintTime;
     public string defaultHint;
+    public bool isopening = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,7 +31,7 @@ public class RaycastInteraction : MonoBehaviour
             {
                 hintText.text = "Press E to open!";
             }
-            if (interactable && interactable.activated) 
+            if (interactable && interactable.activated && isopening == false) 
             {
                 hintText.text = "Already opened!";
 
@@ -61,12 +62,15 @@ public class RaycastInteraction : MonoBehaviour
         float time = 0;
         while (time < hintTime)
         {
+            isopening = true;
+            hintText.text = "Opening...";
+
             time += Time.deltaTime;
             uiGO.SetActive(true);
             yield return null;
         }
+        isopening = false;
         uiGO.SetActive(false);
-        hintText.text = defaultHint;
     }
 
 }
